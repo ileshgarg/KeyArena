@@ -137,7 +137,7 @@ export default function LeaderboardPage() {
                 : 'text-text-muted hover:text-text-primary'
             }`}
           >
-            Today's Scores
+            Today&apos;s Scores
           </button>
           <button
             onClick={() => setBoardType('all_tests')}

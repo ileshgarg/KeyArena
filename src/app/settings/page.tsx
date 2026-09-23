@@ -449,7 +449,7 @@ export default function SettingsPage() {
                     Data Management & Privacy
                   </h3>
                   <p className="text-xs text-text-muted">
-                    KeyArena requires no account. All tests, statistics, and records reside exclusively inside your browser's IndexedDB.
+                    KeyArena requires no account. All tests, statistics, and records reside exclusively inside your browser&apos;s IndexedDB.
                   </p>
                 </div>
 

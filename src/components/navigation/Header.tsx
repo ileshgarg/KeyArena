@@ -71,6 +71,7 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Brand wordmark */}
         <div className="flex items-center space-x-6">
           <Link href="/" className="flex items-center group py-1" title="KeyArena Home">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/logo.svg"
               alt="KeyArena Logo"

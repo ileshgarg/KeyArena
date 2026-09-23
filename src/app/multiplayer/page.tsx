@@ -397,7 +397,7 @@ export default function MultiplayerPage() {
                   Join with Code
                 </h2>
                 <p className="text-xs text-text-muted mb-4">
-                  Enter an existing 4-letter room code (e.g. KEY-7291) to enter a friend's lobby.
+                  Enter an existing 4-letter room code (e.g. KEY-7291) to enter a friend&apos;s lobby.
                 </p>
 
                 <input
