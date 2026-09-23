@@ -19,13 +19,9 @@ Vercel natively supports Next.js with zero configuration.
    - **Output Directory**: `.next`
 5. Click **Deploy**. Your app will be live on `https://your-project.vercel.app` in under 2 minutes.
 
-> **Note on Multiplayer**: When deployed on Vercel (serverless), the solo typing arena, deliberate practice, stats, challenges, themes, and sound work 100% offline. If you also want live multiplayer rooms, deploy `server/socket-server.js` on Railway or Render, and add `NEXT_PUBLIC_WS_URL=wss://your-ws-server.com` in Vercel's Environment Variables.
-
 ---
 
-### Option 2: Deploy to Railway (Web + WebSocket Support)
-
-Railway can host both the Next.js frontend and the WebSocket server effortlessly.
+### Option 2: Deploy to Railway
 
 1. Install the Railway CLI or use the web dashboard at [railway.app](https://railway.app).
 2. Create a new project and select **"Deploy from GitHub repo"**.
@@ -38,19 +34,18 @@ Railway can host both the Next.js frontend and the WebSocket server effortlessly
 
 ### Option 3: Deploy with Docker & Docker Compose (VPS / Self-Hosted)
 
-Run both the Next.js web application and the multiplayer WebSocket server with a single command:
+Run the Next.js web application with a single command:
 
 ```bash
 # Clone repository
 git clone <your-repo-url>
 cd KeyArena
 
-# Start services in background
+# Start service in background
 docker compose up -d --build
 ```
 
 - Web App: `http://your-server-ip:3000`
-- WebSocket Server: `ws://your-server-ip:8080`
 
 ---
 
@@ -65,9 +60,6 @@ npm test
 
 # Run Next.js dev server
 npm run dev
-
-# Run WebSocket multiplayer server
-npm run server
 
 # Build for production
 npm run build
@@ -86,5 +78,5 @@ npm run start
 - **Deliberate Practice Suite**: Missed words, slow words, biwords/n-grams, and character error analytics.
 - **Custom Theme Studio**: 8 built-in technical themes (Graphite, Terminal, Amber, Slate, etc.) and a custom color picker.
 - **Procedural Web Audio**: Zero-lag mechanical switch sounds synthesized with the Web Audio API.
-- **Multiplayer Races**: Synchronized room lobbies (`KEY-XXXX`) with live track lanes.
+- **Daily Challenges & Personal Bests**: Deterministic daily challenges seeded by date with shareable links and streak tracking.
 - **Data Portability**: Full JSON export and import in Settings.

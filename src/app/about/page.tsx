@@ -62,10 +62,10 @@ export default function AboutPage() {
           <section className="space-y-3">
             <h2 className="text-sm font-bold text-text-primary uppercase tracking-wider flex items-center space-x-2">
               <Award className="w-4 h-4 text-accent" />
-              <span>Competitive Races & Anti-Cheat</span>
+              <span>Competitive Sprints & Anti-Cheat</span>
             </h2>
             <p>
-              KeyArena features real-time multiplayer races over WebSockets with anonymous temporary player IDs. A built-in anti-cheat validator inspects keystroke interval distributions to flag impossible mechanical speeds and synthetic macro injection, ensuring authentic competitive integrity.
+              KeyArena features daily competitive sprints and local leaderboards. A built-in anti-cheat validator inspects keystroke interval distributions to flag impossible mechanical speeds and synthetic macro injection, ensuring authentic typing integrity.
             </p>
           </section>
         </div>

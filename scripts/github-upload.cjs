@@ -135,11 +135,10 @@ async function main() {
     }
   }
 
-  // 3. Create tree
+  // 3. Create tree (omit base_tree so deleted files are pruned from the repository)
   console.log('Creating Git tree...');
   const treePayload = {
-    tree: treeItems,
-    base_tree: baseTreeSha
+    tree: treeItems
   };
   const treeData = await ghFetch(`https://api.github.com/repos/${OWNER}/${REPO}/git/trees`, {
     method: 'POST',
@@ -149,8 +148,9 @@ async function main() {
 
   // 4. Create commit
   console.log('Creating commit...');
+  const commitMessage = process.argv[3] || 'Remove multiplayer and simplify architecture';
   const commitPayload = {
-    message: 'Fix: Keyboard focus lock and word limit persistence across difficulties and custom limits',
+    message: commitMessage,
     tree: treeData.sha,
     parents: [parentCommitSha]
   };

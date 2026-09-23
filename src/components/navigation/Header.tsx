@@ -9,7 +9,6 @@ import {
   BarChart2,
   Trophy,
   Target,
-  Users,
   Settings,
   Volume2,
   VolumeX,
@@ -57,7 +56,6 @@ export const Header: React.FC<HeaderProps> = ({
     { href: '/stats', label: 'Statistics', icon: BarChart2 },
     { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
     { href: '/challenge', label: 'Challenges', icon: Flame },
-    { href: '/multiplayer', label: 'Multiplayer', icon: Users },
     { href: '/settings', label: 'Settings', icon: Settings }
   ];
 

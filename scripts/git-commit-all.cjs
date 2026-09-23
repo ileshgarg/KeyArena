@@ -13,10 +13,14 @@ async function main() {
     if (workdir >= 1) {
       await git.add({ fs, dir, filepath });
       staged++;
+    } else if (workdir === 0 && head >= 1) {
+      await git.remove({ fs, dir, filepath });
+      staged++;
     }
   }
   console.log(`Successfully staged ${staged} files.`);
 
+  const message = process.argv[2] || 'Update KeyArena platform';
   const sha = await git.commit({
     fs,
     dir,
@@ -24,7 +28,7 @@ async function main() {
       name: 'Ilesh Garg',
       email: 'ileshgarg@users.noreply.github.com'
     },
-    message: 'Initial commit: KeyArena typing performance platform'
+    message
   });
   console.log('Committed commit SHA:', sha);
 
