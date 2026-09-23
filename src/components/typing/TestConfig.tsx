@@ -1,13 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   TestDifficulty,
   TestMode,
   TestModifier
 } from '@keyarena/typing-engine';
 import { ALL_LANGUAGES } from '@/lib/languages';
-import { Globe, Clock, Type, Quote, Edit3, Sliders, ShieldAlert, EyeOff } from 'lucide-react';
+import { Globe, Clock, Type, Quote, Edit3, ShieldAlert, EyeOff } from 'lucide-react';
 
 interface TestConfigProps {
   mode: TestMode;
@@ -56,6 +56,29 @@ export const TestConfig: React.FC<TestConfigProps> = ({
   const wordCounts = [10, 25, 50, 100, 200];
   const difficulties: TestDifficulty[] = ['easy', 'normal', 'hard', 'expert'];
 
+  const [isEditingCustomWords, setIsEditingCustomWords] = useState(false);
+  const [customWordsInput, setCustomWordsInput] = useState('');
+  const [isEditingCustomTime, setIsEditingCustomTime] = useState(false);
+  const [customTimeInput, setCustomTimeInput] = useState('');
+
+  // Handle custom word count submission
+  const submitCustomWords = () => {
+    const val = parseInt(customWordsInput, 10);
+    if (!isNaN(val) && val >= 5 && val <= 1000) {
+      onChangeWordCount(val);
+    }
+    setIsEditingCustomWords(false);
+  };
+
+  // Handle custom time submission
+  const submitCustomTime = () => {
+    const val = parseInt(customTimeInput, 10);
+    if (!isNaN(val) && val >= 5 && val <= 3600) {
+      onChangeDuration(val);
+    }
+    setIsEditingCustomTime(false);
+  };
+
   return (
     <div className={`w-full flex flex-col items-center gap-3 transition-opacity duration-200 ${disabled ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
       {/* Primary Mode Selector Bar */}
@@ -63,7 +86,11 @@ export const TestConfig: React.FC<TestConfigProps> = ({
         {/* Mode buttons */}
         <div className="flex items-center space-x-1 border-r border-border pr-2 mr-1">
           <button
-            onClick={() => onChangeMode('time')}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={(e) => {
+              e.currentTarget.blur();
+              onChangeMode('time');
+            }}
             className={`flex items-center space-x-1.5 px-2.5 py-1 rounded transition-colors ${
               mode === 'time'
                 ? 'bg-bg-subtle text-accent font-medium'
@@ -74,7 +101,11 @@ export const TestConfig: React.FC<TestConfigProps> = ({
             <span>time</span>
           </button>
           <button
-            onClick={() => onChangeMode('words')}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={(e) => {
+              e.currentTarget.blur();
+              onChangeMode('words');
+            }}
             className={`flex items-center space-x-1.5 px-2.5 py-1 rounded transition-colors ${
               mode === 'words'
                 ? 'bg-bg-subtle text-accent font-medium'
@@ -85,7 +116,11 @@ export const TestConfig: React.FC<TestConfigProps> = ({
             <span>words</span>
           </button>
           <button
-            onClick={() => onChangeMode('quote')}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={(e) => {
+              e.currentTarget.blur();
+              onChangeMode('quote');
+            }}
             className={`flex items-center space-x-1.5 px-2.5 py-1 rounded transition-colors ${
               mode === 'quote'
                 ? 'bg-bg-subtle text-accent font-medium'
@@ -96,7 +131,11 @@ export const TestConfig: React.FC<TestConfigProps> = ({
             <span>quote</span>
           </button>
           <button
-            onClick={() => onChangeMode('custom')}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={(e) => {
+              e.currentTarget.blur();
+              onChangeMode('custom');
+            }}
             className={`flex items-center space-x-1.5 px-2.5 py-1 rounded transition-colors ${
               mode === 'custom'
                 ? 'bg-bg-subtle text-accent font-medium'
@@ -108,33 +147,82 @@ export const TestConfig: React.FC<TestConfigProps> = ({
           </button>
         </div>
 
-        {/* Sub-mode Options */}
+        {/* Sub-mode Options: Time */}
         {mode === 'time' && (
           <div className="flex items-center space-x-1 border-r border-border pr-2 mr-1">
             {durations.map((d) => (
               <button
                 key={d}
-                onClick={() => onChangeDuration(d)}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={(e) => {
+                  e.currentTarget.blur();
+                  setIsEditingCustomTime(false);
+                  onChangeDuration(d);
+                }}
                 className={`px-2 py-1 rounded transition-colors ${
-                  targetDuration === d
+                  targetDuration === d && !isEditingCustomTime
                     ? 'text-accent font-semibold bg-bg-subtle'
                     : 'text-text-muted hover:text-text-primary'
                 }`}
               >
-                {d}
+                {d}s
               </button>
             ))}
+
+            {isEditingCustomTime ? (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  submitCustomTime();
+                }}
+                className="inline-flex items-center"
+              >
+                <input
+                  type="number"
+                  min="5"
+                  max="3600"
+                  value={customTimeInput}
+                  onChange={(e) => setCustomTimeInput(e.target.value)}
+                  onBlur={submitCustomTime}
+                  autoFocus
+                  placeholder="sec"
+                  className="w-12 bg-bg-subtle border border-accent text-accent font-semibold px-1 py-0.5 rounded text-center text-xs focus:outline-none"
+                />
+              </form>
+            ) : (
+              <button
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  setCustomTimeInput(targetDuration.toString());
+                  setIsEditingCustomTime(true);
+                }}
+                className={`px-2 py-1 rounded transition-colors ${
+                  !durations.includes(targetDuration)
+                    ? 'text-accent font-semibold bg-bg-subtle'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+                title="Set custom duration in seconds"
+              >
+                {!durations.includes(targetDuration) ? `${targetDuration}s` : 'custom'}
+              </button>
+            )}
           </div>
         )}
 
+        {/* Sub-mode Options: Words */}
         {mode === 'words' && (
           <div className="flex items-center space-x-1 border-r border-border pr-2 mr-1">
             {wordCounts.map((w) => (
               <button
                 key={w}
-                onClick={() => onChangeWordCount(w)}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={(e) => {
+                  e.currentTarget.blur();
+                  setIsEditingCustomWords(false);
+                  onChangeWordCount(w);
+                }}
                 className={`px-2 py-1 rounded transition-colors ${
-                  targetWordCount === w
+                  targetWordCount === w && !isEditingCustomWords
                     ? 'text-accent font-semibold bg-bg-subtle'
                     : 'text-text-muted hover:text-text-primary'
                 }`}
@@ -142,15 +230,58 @@ export const TestConfig: React.FC<TestConfigProps> = ({
                 {w}
               </button>
             ))}
+
+            {isEditingCustomWords ? (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  submitCustomWords();
+                }}
+                className="inline-flex items-center"
+              >
+                <input
+                  type="number"
+                  min="5"
+                  max="1000"
+                  value={customWordsInput}
+                  onChange={(e) => setCustomWordsInput(e.target.value)}
+                  onBlur={submitCustomWords}
+                  autoFocus
+                  placeholder="words"
+                  className="w-14 bg-bg-subtle border border-accent text-accent font-semibold px-1 py-0.5 rounded text-center text-xs focus:outline-none"
+                />
+              </form>
+            ) : (
+              <button
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  setCustomWordsInput(targetWordCount.toString());
+                  setIsEditingCustomWords(true);
+                }}
+                className={`px-2 py-1 rounded transition-colors ${
+                  !wordCounts.includes(targetWordCount)
+                    ? 'text-accent font-semibold bg-bg-subtle'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+                title="Set custom word limit"
+              >
+                {!wordCounts.includes(targetWordCount) ? `${targetWordCount} words` : 'custom'}
+              </button>
+            )}
           </div>
         )}
 
+        {/* Sub-mode Options: Quote */}
         {mode === 'quote' && (
           <div className="flex items-center space-x-1 border-r border-border pr-2 mr-1">
             {(['short', 'medium', 'long', 'random'] as const).map((q) => (
               <button
                 key={q}
-                onClick={() => onChangeQuoteLength(q)}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={(e) => {
+                  e.currentTarget.blur();
+                  onChangeQuoteLength(q);
+                }}
                 className={`px-2 py-1 rounded capitalize transition-colors ${
                   quoteLength === q
                     ? 'text-accent font-semibold bg-bg-subtle'
@@ -167,7 +298,11 @@ export const TestConfig: React.FC<TestConfigProps> = ({
         {mode !== 'quote' && mode !== 'custom' && (
           <div className="flex items-center space-x-1 border-r border-border pr-2 mr-1">
             <button
-              onClick={onTogglePunctuation}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={(e) => {
+                e.currentTarget.blur();
+                onTogglePunctuation();
+              }}
               className={`px-2 py-1 rounded transition-colors ${
                 punctuation
                   ? 'bg-accent/15 text-accent font-medium'
@@ -177,7 +312,11 @@ export const TestConfig: React.FC<TestConfigProps> = ({
               @ punctuation
             </button>
             <button
-              onClick={onToggleNumbers}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={(e) => {
+                e.currentTarget.blur();
+                onToggleNumbers();
+              }}
               className={`px-2 py-1 rounded transition-colors ${
                 numbers
                   ? 'bg-accent/15 text-accent font-medium'
@@ -215,10 +354,14 @@ export const TestConfig: React.FC<TestConfigProps> = ({
             {difficulties.map((d) => (
               <button
                 key={d}
-                onClick={() => onChangeDifficulty(d)}
-                className={`px-1.5 py-0.5 rounded capitalize ${
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={(e) => {
+                  e.currentTarget.blur();
+                  onChangeDifficulty(d);
+                }}
+                className={`px-1.5 py-0.5 rounded capitalize transition-colors ${
                   difficulty === d
-                    ? 'text-accent font-bold'
+                    ? 'text-accent font-bold bg-accent/10'
                     : 'text-text-muted hover:text-text-secondary'
                 }`}
               >
@@ -231,7 +374,11 @@ export const TestConfig: React.FC<TestConfigProps> = ({
         {/* Experimental Modifiers */}
         <div className="flex items-center space-x-1.5 bg-bg-surface/60 border border-border px-2 py-0.5 rounded">
           <button
-            onClick={() => onToggleModifier('sudden-death')}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={(e) => {
+              e.currentTarget.blur();
+              onToggleModifier('sudden-death');
+            }}
             className={`flex items-center space-x-1 px-1.5 py-0.5 rounded transition-colors ${
               modifiers.includes('sudden-death')
                 ? 'text-red-400 font-semibold bg-red-950/40'
@@ -244,7 +391,11 @@ export const TestConfig: React.FC<TestConfigProps> = ({
           </button>
 
           <button
-            onClick={() => onToggleModifier('blind')}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={(e) => {
+              e.currentTarget.blur();
+              onToggleModifier('blind');
+            }}
             className={`flex items-center space-x-1 px-1.5 py-0.5 rounded transition-colors ${
               modifiers.includes('blind')
                 ? 'text-accent font-semibold bg-accent-subtle'
@@ -257,7 +408,11 @@ export const TestConfig: React.FC<TestConfigProps> = ({
           </button>
 
           <button
-            onClick={() => onToggleModifier('no-backspace')}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={(e) => {
+              e.currentTarget.blur();
+              onToggleModifier('no-backspace');
+            }}
             className={`px-1.5 py-0.5 rounded transition-colors ${
               modifiers.includes('no-backspace')
                 ? 'text-amber-400 font-semibold bg-amber-950/40'
@@ -269,7 +424,11 @@ export const TestConfig: React.FC<TestConfigProps> = ({
           </button>
 
           <button
-            onClick={() => onToggleModifier('strict')}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={(e) => {
+              e.currentTarget.blur();
+              onToggleModifier('strict');
+            }}
             className={`px-1.5 py-0.5 rounded transition-colors ${
               modifiers.includes('strict')
                 ? 'text-purple-400 font-semibold bg-purple-950/40'

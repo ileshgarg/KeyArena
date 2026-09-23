@@ -211,17 +211,15 @@ export function applyPunctuation(words: string[], rng: SeededRandom): string[] {
  * Injects realistic numbers into words (integers, years, decimals, percentages)
  */
 export function applyNumbers(words: string[], rng: SeededRandom): string[] {
-  const result: string[] = [];
+  const result: string[] = [...words];
   const years = [1984, 1999, 2001, 2012, 2020, 2024, 2026, 2030];
   let numbersAdded = 0;
 
-  for (let i = 0; i < words.length; i++) {
-    result.push(words[i]);
-
-    // Insert a number every ~5-8 words or guarantee at least one if none added yet near the end
+  for (let i = 0; i < result.length; i++) {
+    // Replace roughly every 5-6th word with a number to preserve exact word limit
     const shouldInsert =
-      (rng.next() < 0.20 && i < words.length - 1) ||
-      (i === Math.floor(words.length / 2) && numbersAdded === 0);
+      (rng.next() < 0.20 && i < result.length - 1) ||
+      (i === Math.floor(result.length / 2) && numbersAdded === 0);
 
     if (shouldInsert) {
       numbersAdded++;
@@ -236,7 +234,7 @@ export function applyNumbers(words: string[], rng: SeededRandom): string[] {
       } else {
         numStr = `${rng.nextInt(1, 99)}.${rng.nextInt(1, 99)}`;
       }
-      result.push(numStr);
+      result[i] = numStr;
     }
   }
 
@@ -283,7 +281,7 @@ export function generatePrompt(options: GenerateTextOptions): string {
 
   const baseWords = options.wordList && options.wordList.length > 0 ? options.wordList : CORE_ENGLISH_WORDS;
   const filteredWords = filterByDifficulty(baseWords, options.difficulty || 'normal');
-  const pool = filteredWords.length > 20 ? filteredWords : baseWords;
+  const pool = filteredWords.length >= 5 ? filteredWords : baseWords;
 
   // Determine count
   let count = 25;
@@ -308,6 +306,11 @@ export function generatePrompt(options: GenerateTextOptions): string {
 
   if (options.punctuation) {
     finalWords = applyPunctuation(finalWords, rng);
+  }
+
+  // Guarantee exact word count matches targetWordCount in word mode
+  if (options.mode === 'words') {
+    finalWords = finalWords.slice(0, count);
   }
 
   return finalWords.join(' ');

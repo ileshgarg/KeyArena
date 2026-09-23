@@ -12,21 +12,33 @@ const OWNER = 'ileshgarg';
 const REPO = 'KeyArena';
 const BRANCH = 'main';
 
-async function ghFetch(url, options = {}) {
-  const res = await fetch(url, {
-    ...options,
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Accept': 'application/vnd.github.v3+json',
-      'User-Agent': 'KeyArena-Uploader',
-      ...(options.headers || {})
+async function ghFetch(url, options = {}, retries = 4) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(url, {
+        ...options,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'User-Agent': 'KeyArena-Uploader',
+          ...(options.headers || {})
+        }
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        const err = new Error(`GitHub API Error (${res.status} ${res.statusText}): ${text}`);
+        err.status = res.status;
+        throw err;
+      }
+      return res.json();
+    } catch (err) {
+      if (err.status || attempt === retries) {
+        throw err;
+      }
+      console.log(`Network request failed (${err.message}). Retrying in 2s (attempt ${attempt}/${retries})...`);
+      await new Promise(r => setTimeout(r, 2000));
     }
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`GitHub API Error (${res.status} ${res.statusText}): ${text}`);
   }
-  return res.json();
 }
 
 function getAllFiles(dir, fileList = [], baseDir = dir) {
@@ -74,22 +86,25 @@ async function main() {
     baseTreeSha = commitData.tree.sha;
     console.log(`Found existing branch ${BRANCH} (latest commit: ${parentCommitSha.slice(0, 7)})`);
   } catch (err) {
-    console.log(`Branch ${BRANCH} does not exist or repository is empty. Initializing repository...`);
-    // Initialize repository by creating README.md via Contents API
-    const readmePath = path.join(rootDir, 'README.md');
-    const readmeContent = fs.readFileSync(readmePath, 'utf8');
-    const initRes = await ghFetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/README.md`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        message: 'Initial repository setup',
-        content: Buffer.from(readmeContent).toString('base64'),
-        branch: BRANCH
-      })
-    });
-    parentCommitSha = initRes.commit.sha;
-    const commitData = await ghFetch(`https://api.github.com/repos/${OWNER}/${REPO}/git/commits/${parentCommitSha}`);
-    baseTreeSha = commitData.tree.sha;
-    console.log(`Initialized repo with initial commit: ${parentCommitSha.slice(0, 7)}`);
+    if (err.status === 404) {
+      console.log(`Branch ${BRANCH} does not exist or repository is empty. Initializing repository...`);
+      const readmePath = path.join(rootDir, 'README.md');
+      const readmeContent = fs.readFileSync(readmePath, 'utf8');
+      const initRes = await ghFetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/README.md`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          message: 'Initial repository setup',
+          content: Buffer.from(readmeContent).toString('base64'),
+          branch: BRANCH
+        })
+      });
+      parentCommitSha = initRes.commit.sha;
+      const commitData = await ghFetch(`https://api.github.com/repos/${OWNER}/${REPO}/git/commits/${parentCommitSha}`);
+      baseTreeSha = commitData.tree.sha;
+      console.log(`Initialized repo with initial commit: ${parentCommitSha.slice(0, 7)}`);
+    } else {
+      throw err;
+    }
   }
 
   // 2. Upload blobs for each file
@@ -135,7 +150,7 @@ async function main() {
   // 4. Create commit
   console.log('Creating commit...');
   const commitPayload = {
-    message: 'Initial commit: KeyArena typing performance platform with full deployment configs',
+    message: 'Fix: Keyboard focus lock and word limit persistence across difficulties and custom limits',
     tree: treeData.sha,
     parents: [parentCommitSha]
   };

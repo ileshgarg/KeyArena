@@ -76,8 +76,30 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
       } else if (relativeTop < 20 && containerRef.current.scrollTop > 0) {
         containerRef.current.scrollTop = 0;
       }
+    } else {
+      setCaretPos({ top: 0, left: 0, height: 28, width: 2 });
     }
   }, [caretStyle]);
+
+  // Reset all state cleanly when engine instance changes
+  useEffect(() => {
+    setLiveWpm(0);
+    setLiveRawWpm(0);
+    setLiveAcc(100);
+    setTimeRemaining(engine.getTimeRemaining());
+    setProgress(0);
+    setIsTyping(false);
+    setFailedReason(null);
+    if (containerRef.current) {
+      containerRef.current.scrollTop = 0;
+    }
+    if (hiddenInputRef.current) {
+      hiddenInputRef.current.value = '';
+      hiddenInputRef.current.focus();
+    }
+    setIsInputFocused(true);
+    updateCaretPosition();
+  }, [engine, updateCaretPosition]);
 
   // Sync engine listeners
   useEffect(() => {
@@ -136,16 +158,20 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
     };
   }, [engine.status, engine, onFocusChange]);
 
-  // Initial caret update, window resize, and auto-focus handler
-  useEffect(() => {
-    updateCaretPosition();
+  // Focus management
+  const focusInput = useCallback(() => {
     hiddenInputRef.current?.focus();
     setIsInputFocused(true);
+  }, []);
+
+  // Window resize and auto-focus handler
+  useEffect(() => {
+    updateCaretPosition();
+    focusInput();
 
     const handleResize = () => updateCaretPosition();
     const handleGlobalClick = () => {
-      hiddenInputRef.current?.focus();
-      setIsInputFocused(true);
+      focusInput();
     };
 
     window.addEventListener('resize', handleResize);
@@ -154,54 +180,94 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('click', handleGlobalClick);
     };
-  }, [updateCaretPosition, engine.words]);
+  }, [updateCaretPosition, focusInput, engine.words]);
 
-  // Focus management
-  const focusInput = () => {
-    hiddenInputRef.current?.focus();
-    setIsInputFocused(true);
-  };
+  // Core keystroke processor (shared between input onKeyDown and global window onKeyDown)
+  const processKey = useCallback(
+    (key: string, ctrlKey: boolean, preventDefault: () => void) => {
+      if (engine.status === 'completed' || engine.status === 'failed') {
+        if (key === 'Tab' || key === 'Enter') {
+          preventDefault();
+          onRestart();
+        }
+        return;
+      }
 
-  // Keystroke handler
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (engine.status === 'completed' || engine.status === 'failed') {
-      if (e.key === 'Tab' || e.key === 'Enter') {
-        e.preventDefault();
+      // Quick restart / change words shortcut: Enter or Tab at ANY time
+      if (key === 'Enter' || key === 'Tab') {
+        preventDefault();
         onRestart();
-      }
-      return;
-    }
-
-    // Quick restart / change words shortcut: Enter or Tab at ANY time
-    if (e.key === 'Enter' || e.key === 'Tab') {
-      e.preventDefault();
-      onRestart();
-      return;
-    }
-
-    // Handle Ctrl+Backspace (word delete)
-    if (e.ctrlKey && e.key === 'Backspace') {
-      e.preventDefault();
-      engine.handleCtrlBackspace();
-      return;
-    }
-
-    // Normal input
-    if (e.key === 'Backspace' || e.key === ' ' || e.key.length === 1) {
-      if (e.key === ' ') e.preventDefault();
-
-      const prevIncorrect = engine.incorrectKeystrokes;
-      engine.handleKey(e.key, Date.now());
-
-      const wasError = engine.incorrectKeystrokes > prevIncorrect;
-      if (wasError) {
-        soundEngine.playError();
-      } else {
-        soundEngine.playKey(e.key === ' ');
+        return;
       }
 
-      onKeyPress?.(e.key, wasError);
-    }
+      // Handle Ctrl+Backspace (word delete)
+      if (ctrlKey && key === 'Backspace') {
+        preventDefault();
+        engine.handleCtrlBackspace();
+        return;
+      }
+
+      // Normal input
+      if (key === 'Backspace' || key === ' ' || key.length === 1) {
+        if (key === ' ') preventDefault();
+
+        const prevIncorrect = engine.incorrectKeystrokes;
+        engine.handleKey(key, Date.now());
+
+        const wasError = engine.incorrectKeystrokes > prevIncorrect;
+        if (wasError) {
+          soundEngine.playError();
+        } else {
+          soundEngine.playKey(key === ' ');
+        }
+
+        onKeyPress?.(key, wasError);
+      }
+    },
+    [engine, onRestart, onKeyPress]
+  );
+
+  // Global window keydown fallback to guarantee keys NEVER get lost if user clicked outside
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      const activeEl = document.activeElement;
+      // Do not intercept if focus is inside an actual form field
+      if (
+        activeEl &&
+        (activeEl.tagName === 'TEXTAREA' ||
+          activeEl.tagName === 'SELECT' ||
+          (activeEl.tagName === 'INPUT' && activeEl !== hiddenInputRef.current))
+      ) {
+        return;
+      }
+
+      // Ignore lone modifier keys
+      if (['Shift', 'Control', 'Alt', 'Meta', 'CapsLock'].includes(e.key)) {
+        return;
+      }
+
+      // Allow Escape for command palette
+      if (e.key === 'Escape') return;
+
+      // If hidden input is already focused, let its own onKeyDown handle it
+      if (document.activeElement === hiddenInputRef.current) {
+        return;
+      }
+
+      // Ensure hidden input is focused immediately
+      focusInput();
+
+      // Process key immediately so this keypress is never lost
+      processKey(e.key, e.ctrlKey, () => e.preventDefault());
+    };
+
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, [focusInput, processKey]);
+
+  // Keystroke handler for hidden input
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    processKey(e.key, e.ctrlKey, () => e.preventDefault());
   };
 
   // Caret CSS classes
@@ -216,7 +282,7 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
 
   return (
     <div
-      className="w-full flex flex-col items-center select-none"
+      className="w-full flex flex-col items-center select-none cursor-text"
       onClick={focusInput}
     >
       {/* Hidden input for physical and mobile keyboard capture */}
@@ -259,7 +325,7 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
           )}
           {engine.config.mode !== 'time' && (
             <div className="text-accent font-bold text-sm">
-              {engine.currentWordIndex}/{engine.config.mode === 'words' ? engine.config.targetWordCount : engine.words.length}
+              {engine.currentWordIndex}/{engine.config.mode === 'words' ? (engine.config.targetWordCount || engine.words.length) : engine.words.length}
             </div>
           )}
           {showLiveWpm && engine.status === 'running' && (
@@ -296,6 +362,7 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
             <span>{failedReason}</span>
           </div>
           <button
+            onMouseDown={(e) => e.preventDefault()}
             onClick={() => {
               setFailedReason(null);
               onRestart();
@@ -377,6 +444,7 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
         }`}
       >
         <button
+          onMouseDown={(e) => e.preventDefault()}
           onClick={onRestart}
           className="flex items-center space-x-1.5 px-3 py-1 rounded hover:bg-bg-subtle hover:text-text-primary transition-colors border border-transparent hover:border-border"
           title="New Words / Restart (Enter or Tab)"

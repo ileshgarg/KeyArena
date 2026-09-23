@@ -173,42 +173,56 @@ export default function HomePage() {
     const updated = saveSettings({ mode });
     setSettings(updated);
     setCurrentResult(null);
+    setIsTypingFocus(false);
+    setTestIteration((prev) => prev + 1);
   };
 
   const updateDuration = (targetDuration: number) => {
     const updated = saveSettings({ targetDuration });
     setSettings(updated);
     setCurrentResult(null);
+    setIsTypingFocus(false);
+    setTestIteration((prev) => prev + 1);
   };
 
   const updateWordCount = (targetWordCount: number) => {
     const updated = saveSettings({ targetWordCount });
     setSettings(updated);
     setCurrentResult(null);
+    setIsTypingFocus(false);
+    setTestIteration((prev) => prev + 1);
   };
 
   const updateLanguage = (language: string) => {
     const updated = saveSettings({ language });
     setSettings(updated);
     setCurrentResult(null);
+    setIsTypingFocus(false);
+    setTestIteration((prev) => prev + 1);
   };
 
   const updateDifficulty = (difficulty: TestDifficulty) => {
     const updated = saveSettings({ difficulty });
     setSettings(updated);
     setCurrentResult(null);
+    setIsTypingFocus(false);
+    setTestIteration((prev) => prev + 1);
   };
 
   const togglePunctuation = () => {
     const updated = saveSettings({ punctuation: !settings.punctuation });
     setSettings(updated);
     setCurrentResult(null);
+    setIsTypingFocus(false);
+    setTestIteration((prev) => prev + 1);
   };
 
   const toggleNumbers = () => {
     const updated = saveSettings({ numbers: !settings.numbers });
     setSettings(updated);
     setCurrentResult(null);
+    setIsTypingFocus(false);
+    setTestIteration((prev) => prev + 1);
   };
 
   const toggleModifier = (mod: TestModifier) => {
@@ -219,12 +233,16 @@ export default function HomePage() {
     const updated = saveSettings({ modifiers: updatedMods });
     setSettings(updated);
     setCurrentResult(null);
+    setIsTypingFocus(false);
+    setTestIteration((prev) => prev + 1);
   };
 
   const updateQuoteLength = (quoteLength: 'short' | 'medium' | 'long' | 'random') => {
     const updated = saveSettings({ quoteLength });
     setSettings(updated);
     setCurrentResult(null);
+    setIsTypingFocus(false);
+    setTestIteration((prev) => prev + 1);
   };
 
   return (
@@ -271,7 +289,7 @@ export default function HomePage() {
 
             {/* Dominant Typing Area */}
             <TypingArea
-              key={testIteration}
+              key={`${testIteration}_${settings.mode}_${settings.targetDuration}_${settings.targetWordCount}_${settings.difficulty}_${settings.language}_${settings.punctuation}_${settings.numbers}_${settings.modifiers.join(',')}`}
               engine={engine}
               caretStyle={settings.caretStyle}
               caretAnimation={settings.caretAnimation}
