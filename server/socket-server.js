@@ -58,7 +58,7 @@ wss.on('connection', (ws) => {
           const player = {
             id: playerId,
             name: msg.playerName || 'Pilot',
-            avatarColor: msg.avatarColor || '#38bdf8',
+            avatarColor: msg.avatarColor || '#00F700',
             ws,
             progress: 0,
             wpm: 0,

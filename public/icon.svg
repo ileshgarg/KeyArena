@@ -5,9 +5,9 @@
       <feComposite in="SourceGraphic" in2="blur" operator="over" />
     </filter>
   </defs>
-  <rect x="0" y="0" width="50" height="50" rx="10" fill="#161B22" stroke="#00D2FF" stroke-width="2" filter="url(#neonGlow)" />
+  <rect x="0" y="0" width="50" height="50" rx="10" fill="#161B22" stroke="#00F700" stroke-width="2" filter="url(#neonGlow)" />
   <path d="M 14 14 L 26 25 L 14 36" fill="none" stroke="#F8FAFC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-  <rect x="32" y="32" width="8" height="4" fill="#00D2FF">
+  <rect x="32" y="32" width="8" height="4" fill="#00F700">
     <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite" />
   </rect>
 </svg>

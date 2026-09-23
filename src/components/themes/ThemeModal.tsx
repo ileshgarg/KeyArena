@@ -28,12 +28,12 @@ export const ThemeModal: React.FC<ThemeModalProps> = ({
     textPrimary: '#e6edf3',
     textSecondary: '#9ca7b8',
     textMuted: '#4f596a',
-    accent: '#38bdf8',
-    accentHover: '#0ea5e9',
-    accentSubtle: '#0c2d48',
+    accent: '#00F700',
+    accentHover: '#00d900',
+    accentSubtle: '#003800',
     error: '#ef4444',
     errorSubtle: '#451212',
-    caret: '#38bdf8',
+    caret: '#00F700',
     border: '#232936'
   });
 

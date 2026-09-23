@@ -9,14 +9,14 @@
   --text-primary: #e6edf3;
   --text-secondary: #9ca7b8;
   --text-muted: #4f596a;
-  --accent: #38bdf8;
-  --accent-hover: #0ea5e9;
-  --accent-subtle: #0c2d48;
+  --accent: #00F700;
+  --accent-hover: #00d900;
+  --accent-subtle: #003800;
   --error: #ef4444;
   --error-subtle: #451212;
-  --caret: #38bdf8;
+  --caret: #00F700;
   --border: #232936;
-  --border-focus: #38bdf8;
+  --border-focus: #00F700;
 }
 
 body {

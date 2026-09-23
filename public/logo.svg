@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="20 15 340 70" width="100%" height="100%">
   <defs>
-    <!-- Cyan Glow Filter matching the website's active state highlights -->
+    <!-- Neon Glow Filter matching the website's active state highlights -->
     <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
       <feGaussianBlur stdDeviation="3" result="blur" />
       <feComposite in="SourceGraphic" in2="blur" operator="over" />
@@ -10,13 +10,13 @@
   <!-- Logo Icon: Minimalist Terminal/Keycap -->
   <g transform="translate(25, 25)">
     <!-- Outer Keycap Boundary -->
-    <rect x="0" y="0" width="50" height="50" rx="10" fill="#161B22" stroke="#00D2FF" stroke-width="2" filter="url(#neonGlow)" />
+    <rect x="0" y="0" width="50" height="50" rx="10" fill="#161B22" stroke="#00F700" stroke-width="2" filter="url(#neonGlow)" />
     
     <!-- Inner Typing Terminal / Speed Arrow -->
     <path d="M 14 14 L 26 25 L 14 36" fill="none" stroke="#F8FAFC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
     
     <!-- Blinking Terminal Cursor -->
-    <rect x="32" y="32" width="8" height="4" fill="#00D2FF">
+    <rect x="32" y="32" width="8" height="4" fill="#00F700">
       <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite" />
     </rect>
   </g>
@@ -27,7 +27,7 @@
     <text x="0" y="0" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="40" font-weight="700" fill="#F8FAFC">Key</text>
     
     <!-- 'Arena' Text -->
-    <text x="76" y="0" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="40" font-weight="700" fill="#00D2FF" filter="url(#neonGlow)">Arena</text>
+    <text x="76" y="0" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="40" font-weight="700" fill="#00F700" filter="url(#neonGlow)">Arena</text>
     
     <!-- Version Tag matching the UI's existing layout -->
     <rect x="200" y="-32" width="46" height="24" rx="4" fill="#161B22" stroke="#334155" stroke-width="1" />

@@ -204,7 +204,7 @@ export default function SettingsPage() {
                   <div>
                     <label className="block text-text-muted mb-1">Pilot Beacon Color</label>
                     <div className="flex items-center space-x-2">
-                      {['#38bdf8', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#ef4444'].map((c) => (
+                      {['#00F700', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#ef4444'].map((c) => (
                         <button
                           key={c}
                           onClick={() => handleProfileUpdate(profile.displayName, c)}

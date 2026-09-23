@@ -300,14 +300,14 @@ const PROFILE_STORAGE_KEY = 'keyarena_local_profile';
 
 export function getLocalProfile(): LocalProfile {
   if (typeof window === 'undefined') {
-    return { id: 'anon', displayName: 'Anonymous Pilot', avatarColor: '#38bdf8', createdAt: new Date().toISOString() };
+    return { id: 'anon', displayName: 'Anonymous Pilot', avatarColor: '#00F700', createdAt: new Date().toISOString() };
   }
   const raw = localStorage.getItem(PROFILE_STORAGE_KEY);
   if (!raw) {
     const initial: LocalProfile = {
       id: `pilot_${Math.random().toString(36).substring(2, 8)}`,
       displayName: 'Anonymous Pilot',
-      avatarColor: '#38bdf8',
+      avatarColor: '#00F700',
       createdAt: new Date().toISOString()
     };
     localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(initial));
@@ -316,7 +316,7 @@ export function getLocalProfile(): LocalProfile {
   try {
     return JSON.parse(raw);
   } catch {
-    return { id: 'anon', displayName: 'Anonymous Pilot', avatarColor: '#38bdf8', createdAt: new Date().toISOString() };
+    return { id: 'anon', displayName: 'Anonymous Pilot', avatarColor: '#00F700', createdAt: new Date().toISOString() };
   }
 }
 
