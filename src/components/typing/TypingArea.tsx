@@ -40,6 +40,7 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const hiddenInputRef = useRef<HTMLInputElement>(null);
   const activeCharRef = useRef<HTMLSpanElement | null>(null);
+  const lastCharRef = useRef<HTMLSpanElement | null>(null);
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const [liveWpm, setLiveWpm] = useState(0);
@@ -57,13 +58,16 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
   // Update caret position from DOM
   const updateCaretPosition = useCallback(() => {
     if (!containerRef.current) return;
-    const charEl = activeCharRef.current;
-    if (charEl) {
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const charRect = charEl.getBoundingClientRect();
+    const containerEl = containerRef.current;
+    const containerRect = containerEl.getBoundingClientRect();
 
+    const charEl = activeCharRef.current;
+    const lastCharEl = lastCharRef.current;
+
+    if (charEl) {
+      const charRect = charEl.getBoundingClientRect();
       setCaretPos({
-        top: charRect.top - containerRect.top + containerRef.current.scrollTop,
+        top: charRect.top - containerRect.top + containerEl.scrollTop,
         left: charRect.left - containerRect.left,
         height: charRect.height || 28,
         width: caretStyle === 'block' ? (charRect.width || 12) : 2
@@ -72,16 +76,46 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
       // Smooth auto-scroll if cursor moves to lower lines
       const relativeTop = charRect.top - containerRect.top;
       if (relativeTop > 120) {
-        containerRef.current.scrollTop += relativeTop - 80;
-      } else if (relativeTop < 20 && containerRef.current.scrollTop > 0) {
-        containerRef.current.scrollTop = 0;
+        containerEl.scrollTop += relativeTop - 80;
+      } else if (relativeTop < 20 && containerEl.scrollTop > 0) {
+        containerEl.scrollTop = 0;
+      }
+    } else if (lastCharEl) {
+      // User typed to the end of the word or extra chars and paused;
+      // Position caret at the right edge of the last character
+      const charRect = lastCharEl.getBoundingClientRect();
+      setCaretPos({
+        top: charRect.top - containerRect.top + containerEl.scrollTop,
+        left: charRect.right - containerRect.left,
+        height: charRect.height || 28,
+        width: caretStyle === 'block' ? 12 : 2
+      });
+
+      const relativeTop = charRect.top - containerRect.top;
+      if (relativeTop > 120) {
+        containerEl.scrollTop += relativeTop - 80;
+      } else if (relativeTop < 20 && containerEl.scrollTop > 0) {
+        containerEl.scrollTop = 0;
       }
     } else {
-      setCaretPos({ top: 0, left: 0, height: 28, width: 2 });
+      // Only position at first character on initial idle before test starts
+      if (engine.status === 'idle' && engine.currentWordIndex === 0 && engine.currentCharIndex === 0) {
+        const firstSpan = containerEl.querySelector('span');
+        if (firstSpan) {
+          const firstRect = firstSpan.getBoundingClientRect();
+          setCaretPos({
+            top: firstRect.top - containerRect.top + containerEl.scrollTop,
+            left: firstRect.left - containerRect.left,
+            height: firstRect.height || 28,
+            width: caretStyle === 'block' ? (firstRect.width || 12) : 2
+          });
+        }
+      }
+      // If user paused or mid-test, NEVER RESET! Keep previous valid caret position!
     }
-  }, [caretStyle]);
+  }, [caretStyle, engine]);
 
-  // Reset all state cleanly when engine instance changes
+  // Reset all state cleanly when a new engine instance is provided
   useEffect(() => {
     setLiveWpm(0);
     setLiveRawWpm(0);
@@ -98,8 +132,11 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
       hiddenInputRef.current.focus();
     }
     setIsInputFocused(true);
-    updateCaretPosition();
-  }, [engine, updateCaretPosition]);
+    requestAnimationFrame(() => {
+      updateCaretPosition();
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [engine]);
 
   // Sync engine listeners
   useEffect(() => {
@@ -411,6 +448,10 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
                 {word.chars.map((charState, cIdx) => {
                   const isCurrentChar =
                     isCurrentWord && cIdx === engine.currentCharIndex;
+                  const isLastCharOfActiveWord =
+                    isCurrentWord &&
+                    engine.currentCharIndex >= word.chars.length &&
+                    cIdx === word.chars.length - 1;
 
                   let statusColor = 'text-text-muted';
                   if (charState.status === 'correct') {
@@ -421,10 +462,17 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
                     statusColor = isBlind ? 'text-text-muted' : 'text-red-400 bg-red-950/40 rounded-sm';
                   }
 
+                  let charRef: React.RefObject<HTMLSpanElement> | null = null;
+                  if (isCurrentChar) {
+                    charRef = activeCharRef;
+                  } else if (isLastCharOfActiveWord) {
+                    charRef = lastCharRef;
+                  }
+
                   return (
                     <span
                       key={cIdx}
-                      ref={isCurrentChar ? activeCharRef : null}
+                      ref={charRef}
                       className={`relative font-mono transition-colors duration-75 ${statusColor}`}
                     >
                       {charState.char}
