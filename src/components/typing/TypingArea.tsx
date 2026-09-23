@@ -50,6 +50,7 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
   const [progress, setProgress] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(true);
+  const [isCapsLockOn, setIsCapsLockOn] = useState(false);
   const [failedReason, setFailedReason] = useState<string | null>(null);
 
   // Caret coordinate tracking
@@ -266,7 +267,15 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
 
   // Global window keydown fallback to guarantee keys NEVER get lost if user clicked outside
   useEffect(() => {
+    const handleModifierState = (e: KeyboardEvent) => {
+      if (typeof e.getModifierState === 'function') {
+        setIsCapsLockOn(e.getModifierState('CapsLock'));
+      }
+    };
+
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      handleModifierState(e);
+
       const activeEl = document.activeElement;
       // Do not intercept if focus is inside an actual form field
       if (
@@ -299,12 +308,25 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
     };
 
     window.addEventListener('keydown', handleGlobalKeyDown);
-    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+    window.addEventListener('keyup', handleModifierState);
+    return () => {
+      window.removeEventListener('keydown', handleGlobalKeyDown);
+      window.removeEventListener('keyup', handleModifierState);
+    };
   }, [focusInput, processKey]);
 
-  // Keystroke handler for hidden input
+  // Keystroke handlers for hidden input
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (typeof e.getModifierState === 'function') {
+      setIsCapsLockOn(e.getModifierState('CapsLock'));
+    }
     processKey(e.key, e.ctrlKey, () => e.preventDefault());
+  };
+
+  const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (typeof e.getModifierState === 'function') {
+      setIsCapsLockOn(e.getModifierState('CapsLock'));
+    }
   };
 
   // Caret CSS classes
@@ -328,6 +350,7 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
         type="text"
         className="opacity-0 absolute -z-50 w-0 h-0 pointer-events-none"
         onKeyDown={handleKeyDown}
+        onKeyUp={handleKeyUp}
         onFocus={() => setIsInputFocused(true)}
         onBlur={() => setIsInputFocused(false)}
         autoFocus
@@ -341,6 +364,14 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
       {!isInputFocused && engine.status !== 'completed' && (
         <div className="text-xs font-mono text-accent mb-2 flex items-center space-x-1.5 animate-pulse">
           <span>Click here or press any key to focus</span>
+        </div>
+      )}
+
+      {/* Caps Lock indicator */}
+      {isCapsLockOn && (
+        <div className="flex items-center space-x-2 px-3 py-1 mb-2.5 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs font-mono font-medium shadow-sm animate-pulse z-20">
+          <span className="flex items-center justify-center w-4 h-4 rounded bg-amber-500/25 text-amber-300 font-bold text-[11px] leading-none">⇪</span>
+          <span>Caps Lock is ON</span>
         </div>
       )}
 

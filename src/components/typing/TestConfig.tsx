@@ -6,7 +6,6 @@ import {
   TestMode,
   TestModifier
 } from '@keyarena/typing-engine';
-import { ALL_LANGUAGES } from '@/lib/languages';
 import { Globe, Clock, Type, Quote, Edit3, ShieldAlert, EyeOff } from 'lucide-react';
 
 interface TestConfigProps {
@@ -328,20 +327,10 @@ export const TestConfig: React.FC<TestConfigProps> = ({
           </div>
         )}
 
-        {/* Language selector */}
-        <div className="flex items-center space-x-1">
-          <Globe className="w-3.5 h-3.5 text-text-muted ml-1" />
-          <select
-            value={language}
-            onChange={(e) => onChangeLanguage(e.target.value)}
-            className="bg-transparent text-text-secondary hover:text-text-primary focus:outline-none cursor-pointer py-1 px-1.5 text-xs font-mono"
-          >
-            {ALL_LANGUAGES.map((l) => (
-              <option key={l.id} value={l.id} className="bg-bg-surface text-text-primary">
-                {l.name}
-              </option>
-            ))}
-          </select>
+        {/* Language (English by default) */}
+        <div className="flex items-center space-x-1.5 px-2 py-1 text-xs font-mono text-text-muted" title="Language: English">
+          <Globe className="w-3.5 h-3.5 text-accent" />
+          <span className="text-text-secondary font-medium">english</span>
         </div>
       </div>
 

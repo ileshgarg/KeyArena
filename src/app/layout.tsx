@@ -9,7 +9,12 @@ export const metadata: Metadata = {
   authors: [{ name: 'KeyArena Team' }],
   manifest: '/manifest.json',
   icons: {
-    icon: '/favicon.ico'
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: '32x32' }
+    ],
+    shortcut: '/icon.svg',
+    apple: '/icon.svg'
   }
 };
 
@@ -30,6 +35,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <head>
+        <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+        <link rel="alternate icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/icon.svg" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
