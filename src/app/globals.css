@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #0d0f12;
+  --bg-surface: #14181f;
+  --bg-subtle: #1b202a;
+  --text-primary: #e6edf3;
+  --text-secondary: #9ca7b8;
+  --text-muted: #4f596a;
+  --accent: #38bdf8;
+  --accent-hover: #0ea5e9;
+  --accent-subtle: #0c2d48;
+  --error: #ef4444;
+  --error-subtle: #451212;
+  --caret: #38bdf8;
+  --border: #232936;
+  --border-focus: #38bdf8;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+  user-select: none;
+}
+
+/* Custom minimal scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Caret Animations */
+@keyframes caretBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.caret-blink {
+  animation: caretBlink 1s ease-in-out infinite;
+}
+
+.caret-smooth {
+  transition: transform 0.08s cubic-bezier(0.2, 0, 0, 1), opacity 0.15s ease;
+}
+
+/* Typing text styling */
+.typing-viewport {
+  mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+}
