@@ -1,7 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="50" height="50">
-  <rect x="0" y="0" width="50" height="50" rx="10" fill="#000000" stroke="#FFFFFF" stroke-width="2" />
-  <path d="M 14 14 L 26 25 L 14 36" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-  <rect x="32" y="32" width="8" height="4" fill="#FFFFFF">
-    <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite" />
-  </rect>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <style>
+      .keycap { fill: #FFFFFF; }
+      .symbol { fill: none; stroke: #000000; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+      .cursor { fill: #000000; }
+      @media (prefers-color-scheme: light) {
+        .keycap { fill: #000000; }
+        .symbol { stroke: #FFFFFF; }
+        .cursor { fill: #FFFFFF; }
+      }
+    </style>
+  </defs>
+  <rect class="keycap" x="1.5" y="1.5" width="29" height="29" rx="6.5" />
+  <path class="symbol" d="M 9.5 9.5 L 16.5 16 L 9.5 22.5" />
+  <rect class="cursor" x="19" y="19.5" width="5" height="3" rx="0.5" />
 </svg>
