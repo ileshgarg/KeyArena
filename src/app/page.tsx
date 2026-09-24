@@ -20,6 +20,7 @@ import { getSettings, saveSettings } from '@/lib/settings';
 import { getWordsForLanguage } from '@/lib/languages';
 import { applyTheme } from '@/lib/themes';
 import { saveTestResult, getAllTests } from '@/lib/db';
+import { Zap, Target, ShieldCheck, BarChart3 } from 'lucide-react';
 
 export default function HomePage() {
   const router = useRouter();
@@ -284,6 +285,110 @@ export default function HomePage() {
               onRestart={handleRestart}
               onFocusChange={setIsTypingFocus}
             />
+
+            {/* Semantic Crawlable Knowledge Base & SEO Guide */}
+            <section
+              aria-label="Typing Speed Test Guide and WPM Benchmarks"
+              className={`w-full max-w-4xl mx-auto mt-16 pt-10 border-t border-border space-y-8 text-xs font-mono transition-opacity duration-300 ${
+                isTypingFocus ? 'opacity-0 pointer-events-none' : 'opacity-100'
+              }`}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div className="p-4 rounded-lg bg-bg-surface border border-border space-y-2">
+                  <div className="flex items-center space-x-2 text-text-primary font-semibold">
+                    <Zap className="w-4 h-4 text-accent" />
+                    <h2 className="text-sm">What is WPM?</h2>
+                  </div>
+                  <p className="text-text-secondary leading-relaxed">
+                    Words Per Minute (WPM) standardizes typing speed where 1 word equals 5 characters (including spaces). Net WPM counts correct characters, while raw WPM measures total keystrokes regardless of errors.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-lg bg-bg-surface border border-border space-y-2">
+                  <div className="flex items-center space-x-2 text-text-primary font-semibold">
+                    <Target className="w-4 h-4 text-accent" />
+                    <h2 className="text-sm">Deliberate Practice</h2>
+                  </div>
+                  <p className="text-text-secondary leading-relaxed">
+                    Stop mindlessly re-typing easy paragraphs. KeyArena isolates your high-error keys, tricky n-grams, and missed words for targeted muscle memory drills to break through speed plateaus.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-lg bg-bg-surface border border-border space-y-2">
+                  <div className="flex items-center space-x-2 text-text-primary font-semibold">
+                    <ShieldCheck className="w-4 h-4 text-accent" />
+                    <h2 className="text-sm">Zero Account Friction</h2>
+                  </div>
+                  <p className="text-text-secondary leading-relaxed">
+                    100% private, client-side persistence with IndexedDB. No passwords, no trackers, no email spam. Your telemetry, streaks, and personal bests stay on your device with JSON backup.
+                  </p>
+                </div>
+              </div>
+
+              {/* Speed Benchmarks Table */}
+              <div className="p-5 rounded-lg bg-bg-surface border border-border space-y-4">
+                <div className="flex items-center justify-between border-b border-border pb-3">
+                  <h3 className="text-sm font-semibold text-text-primary flex items-center space-x-2">
+                    <BarChart3 className="w-4 h-4 text-accent" />
+                    <span>Typing Speed Benchmarks (WPM Tiers)</span>
+                  </h3>
+                  <span className="text-[10px] text-text-muted">Standard 60s English Test</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center">
+                  <div className="p-3 bg-bg-subtle rounded border border-border/50">
+                    <div className="text-text-muted text-[10px] uppercase tracking-wider">Beginner</div>
+                    <div className="text-base font-bold text-text-primary mt-1">&lt; 40 WPM</div>
+                    <p className="text-[11px] text-text-muted mt-1">Hunt-and-peck typists; looking at the keyboard.</p>
+                  </div>
+                  <div className="p-3 bg-bg-subtle rounded border border-border/50">
+                    <div className="text-text-muted text-[10px] uppercase tracking-wider">Average</div>
+                    <div className="text-base font-bold text-text-primary mt-1">40 – 60 WPM</div>
+                    <p className="text-[11px] text-text-muted mt-1">Typical global office and casual computer user speed.</p>
+                  </div>
+                  <div className="p-3 bg-bg-subtle rounded border border-border/50">
+                    <div className="text-text-muted text-[10px] uppercase tracking-wider">Professional</div>
+                    <div className="text-base font-bold text-text-primary mt-1">60 – 90 WPM</div>
+                    <p className="text-[11px] text-text-muted mt-1">Touch typists, software engineers, and transcribers.</p>
+                  </div>
+                  <div className="p-3 bg-bg-subtle rounded border border-accent/40 bg-accent/5">
+                    <div className="text-accent text-[10px] uppercase tracking-wider font-semibold">Master</div>
+                    <div className="text-base font-bold text-text-primary mt-1">90+ WPM</div>
+                    <p className="text-[11px] text-text-secondary mt-1">Competitive keyboard enthusiasts &amp; speed typists.</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Formula & Shortcuts Info */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="p-4 rounded-lg bg-bg-surface border border-border space-y-2">
+                  <h3 className="text-xs font-semibold text-text-primary">How WPM is Calculated</h3>
+                  <div className="p-2.5 bg-bg-subtle rounded border border-border font-mono text-[11px] text-text-primary">
+                    Net WPM = (Correct Characters ÷ 5) ÷ Elapsed Minutes
+                  </div>
+                  <p className="text-[11px] text-text-secondary leading-relaxed">
+                    Uncorrected errors subtract from gross keystroke velocity. KeyArena also logs standard deviation of keystroke intervals to measure Consistency (%).
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-lg bg-bg-surface border border-border space-y-2">
+                  <h3 className="text-xs font-semibold text-text-primary">Keyboard Shortcuts</h3>
+                  <ul className="space-y-1.5 text-[11px] text-text-secondary">
+                    <li className="flex justify-between items-center">
+                      <span>Restart Test:</span>
+                      <kbd className="px-1.5 py-0.5 rounded bg-bg-subtle border border-border text-text-primary">Tab</kbd>
+                    </li>
+                    <li className="flex justify-between items-center">
+                      <span>Command Palette:</span>
+                      <kbd className="px-1.5 py-0.5 rounded bg-bg-subtle border border-border text-text-primary">Esc</kbd>
+                    </li>
+                    <li className="flex justify-between items-center">
+                      <span>Delete Active Word:</span>
+                      <kbd className="px-1.5 py-0.5 rounded bg-bg-subtle border border-border text-text-primary">Ctrl + Backspace</kbd>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </section>
           </div>
         ) : (
           /* Results View with Accurate Telemetry Graph */
