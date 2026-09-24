@@ -37,7 +37,7 @@ export const DEFAULT_SETTINGS: KeyArenaSettings = {
   punctuation: false,
   numbers: false,
   modifiers: [],
-  theme: 'graphite',
+  theme: 'monochrome',
   caretStyle: 'line',
   caretAnimation: 'smooth',
   focusMode: 'subtle',

@@ -8,7 +8,6 @@ import {
   Clock,
   Type,
   Quote,
-  Palette,
   Globe,
   BarChart2,
   Settings,
@@ -17,7 +16,6 @@ import {
   Search,
   X
 } from 'lucide-react';
-import { PRESET_THEMES, applyTheme } from '@/lib/themes';
 import { ALL_LANGUAGES } from '@/lib/languages';
 
 export interface CommandItem {
@@ -182,18 +180,6 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     }
   ];
 
-  // Theme switcher commands
-  const themeCommands: CommandItem[] = PRESET_THEMES.map((theme) => ({
-    id: `theme_${theme.id}`,
-    title: `Theme: ${theme.name}`,
-    category: 'Themes',
-    icon: Palette,
-    action: () => {
-      applyTheme(theme);
-      onClose();
-    }
-  }));
-
   // Language commands
   const languageCommands: CommandItem[] = ALL_LANGUAGES.map((l) => ({
     id: `lang_${l.id}`,
@@ -206,7 +192,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     }
   }));
 
-  const allCommands = [...baseCommands, ...themeCommands, ...languageCommands];
+  const allCommands = [...baseCommands, ...languageCommands];
 
   const filteredCommands = allCommands.filter((cmd) =>
     cmd.title.toLowerCase().includes(query.toLowerCase()) ||

@@ -13,15 +13,11 @@ export default function FAQPage() {
     },
     {
       q: 'Do I need to sign up or create an account?',
-      a: 'No. KeyArena is strictly account-free. All tests, statistics, streak logs, achievements, and custom themes are persisted securely in your browser using IndexedDB.'
+      a: 'No. KeyArena is strictly account-free. All tests, statistics, streak logs, and achievements are persisted securely in your browser using IndexedDB.'
     },
     {
       q: 'What is the Consistency metric?',
       a: 'Consistency measures how uniform your typing velocity is across the duration of a test. It is derived from the standard deviation and coefficient of variation of your keystroke intervals and rolling per-second WPM. Higher consistency indicates smooth, rhythmic typing without stuttering.'
-    },
-    {
-      q: 'How do Daily Challenges work?',
-      a: 'Every day at 00:00 UTC, a deterministic challenge seed is generated from the calendar date. Typists around the world receive the exact same word sequence and constraints, allowing fair asynchronous competition.'
     },
     {
       q: 'How do I backup or transfer my statistics?',
@@ -29,7 +25,7 @@ export default function FAQPage() {
     },
     {
       q: 'What keyboard shortcuts are available?',
-      a: 'Tab or Enter immediately restarts the test. Esc opens the Command Palette where you can switch modes, change languages, or select themes without touching your mouse. Ctrl+Backspace deletes the currently active word.'
+      a: 'Tab or Enter immediately restarts the test. Esc opens the Command Palette where you can switch modes, durations, or preferences without touching your mouse. Ctrl+Backspace deletes the currently active word.'
     }
   ];
 

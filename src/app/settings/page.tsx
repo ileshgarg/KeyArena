@@ -20,11 +20,9 @@ import {
   clearAllTests
 } from '@/lib/db';
 import { soundEngine, SoundType } from '@/lib/audio/sound-engine';
-import { PRESET_THEMES, applyTheme } from '@/lib/themes';
 import {
   Settings,
   Volume2,
-  Palette,
   Keyboard,
   Shield,
   Download,
@@ -116,7 +114,6 @@ export default function SettingsPage() {
   const sections = [
     { id: 'profile', label: 'Local Profile', icon: User },
     { id: 'typing', label: 'Typing & Caret', icon: Keyboard },
-    { id: 'appearance', label: 'Themes & Colors', icon: Palette },
     { id: 'sound', label: 'Sound & Audio', icon: Volume2 },
     { id: 'data', label: 'Data Management & Privacy', icon: Shield }
   ];
@@ -204,12 +201,12 @@ export default function SettingsPage() {
                   <div>
                     <label className="block text-text-muted mb-1">Pilot Beacon Color</label>
                     <div className="flex items-center space-x-2">
-                      {['#00F700', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#ef4444'].map((c) => (
+                      {['#FFFFFF', '#94a3b8', '#10b981', '#f59e0b', '#ec4899', '#ef4444'].map((c) => (
                         <button
                           key={c}
                           onClick={() => handleProfileUpdate(profile.displayName, c)}
                           className={`w-6 h-6 rounded-full border transition-all ${
-                            profile.avatarColor === c ? 'scale-110 border-white' : 'border-black/30'
+                            profile.avatarColor === c ? 'scale-110 border-white ring-1 ring-white' : 'border-border'
                           }`}
                           style={{ backgroundColor: c }}
                         />
@@ -316,50 +313,6 @@ export default function SettingsPage() {
                       <option value="colemak">Colemak</option>
                     </select>
                   </div>
-                </div>
-              </div>
-            )}
-
-            {/* Appearance Section */}
-            {activeSection === 'appearance' && (
-              <div className="space-y-5 text-xs">
-                <div>
-                  <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider mb-1">
-                    Theme Engine
-                  </h3>
-                  <p className="text-xs text-text-muted">
-                    Technical dark-first colorways engineered for high legibility.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {PRESET_THEMES.map((theme) => {
-                    const isSelected = settings.theme === theme.id;
-                    return (
-                      <button
-                        key={theme.id}
-                        onClick={() => {
-                          updateSetting('theme', theme.id);
-                          applyTheme(theme);
-                        }}
-                        className={`p-3 rounded border text-left flex flex-col justify-between ${
-                          isSelected
-                            ? 'border-accent ring-1 ring-accent bg-bg-subtle'
-                            : 'border-border bg-bg-subtle/40 hover:border-text-muted'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="font-semibold text-text-primary">{theme.name}</span>
-                          {isSelected && <Check className="w-3.5 h-3.5 text-accent" />}
-                        </div>
-                        <div className="flex space-x-1">
-                          <span className="w-3 h-3 rounded-full" style={{ backgroundColor: theme.colors.bgPrimary }} />
-                          <span className="w-3 h-3 rounded-full" style={{ backgroundColor: theme.colors.accent }} />
-                          <span className="w-3 h-3 rounded-full" style={{ backgroundColor: theme.colors.textPrimary }} />
-                        </div>
-                      </button>
-                    );
-                  })}
                 </div>
               </div>
             )}

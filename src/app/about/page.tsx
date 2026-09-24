@@ -45,7 +45,7 @@ export default function AboutPage() {
               <span>Zero-Auth Local Persistence</span>
             </h2>
             <p>
-              KeyArena requires no login, no sign-up, and no email verification. All typing telemetry, personal bests, achievement unlocks, daily streaks, and custom theme designs are saved client-side directly into your browser&apos;s IndexedDB and localStorage. You can export and import your full history as clean JSON anytime from Settings.
+              KeyArena requires no login, no sign-up, and no email verification. All typing telemetry, personal bests, achievement unlocks, and daily streaks are saved client-side directly into your browser&apos;s IndexedDB and localStorage. You can export and import your full history as clean JSON anytime from Settings.
             </p>
           </section>
 

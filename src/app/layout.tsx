@@ -22,7 +22,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
-  themeColor: '#0d0f12'
+  themeColor: '#000000'
 };
 
 import { Footer } from '@/components/navigation/Footer';

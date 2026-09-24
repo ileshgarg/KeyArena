@@ -16,10 +16,9 @@ import { TestConfig } from '@/components/typing/TestConfig';
 import { TypingArea } from '@/components/typing/TypingArea';
 import { ResultView } from '@/components/results/ResultView';
 import { CommandPalette } from '@/components/palette/CommandPalette';
-import { ThemeModal } from '@/components/themes/ThemeModal';
 import { getSettings, saveSettings } from '@/lib/settings';
 import { getWordsForLanguage } from '@/lib/languages';
-import { PRESET_THEMES, applyTheme } from '@/lib/themes';
+import { applyTheme } from '@/lib/themes';
 import { saveTestResult, getAllTests } from '@/lib/db';
 
 export default function HomePage() {
@@ -31,7 +30,6 @@ export default function HomePage() {
 
   // Modals
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
-  const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
 
   // Test state
   const [testIteration, setTestIteration] = useState(1);
@@ -41,25 +39,11 @@ export default function HomePage() {
   const [customText, setCustomText] = useState('');
   const [isCustomTextModalOpen, setIsCustomTextModalOpen] = useState(false);
 
-  // Load theme on startup
+  // Load settings and apply monochrome theme on startup
   useEffect(() => {
     const s = getSettings();
     setSettings(s);
-
-    // Apply saved theme
-    if (s.theme === 'custom_user') {
-      const customRaw = localStorage.getItem('keyarena_custom_theme');
-      if (customRaw) {
-        try {
-          applyTheme(JSON.parse(customRaw));
-        } catch {
-          applyTheme(PRESET_THEMES[0]);
-        }
-      }
-    } else {
-      const found = PRESET_THEMES.find((t) => t.id === s.theme);
-      if (found) applyTheme(found);
-    }
+    applyTheme();
   }, []);
 
   // Global keybindings
@@ -250,7 +234,6 @@ export default function HomePage() {
       {/* Compact Technical Navigation */}
       <Header
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
-        onOpenThemeModal={() => setIsThemeModalOpen(true)}
         isTypingFocus={isTypingFocus}
       />
 
@@ -362,13 +345,6 @@ export default function HomePage() {
         onChangeLanguage={updateLanguage}
         onTogglePunctuation={togglePunctuation}
         onToggleNumbers={toggleNumbers}
-      />
-
-      {/* Theme Studio Modal */}
-      <ThemeModal
-        isOpen={isThemeModalOpen}
-        onClose={() => setIsThemeModalOpen(false)}
-        onThemeChanged={(themeId) => setSettings((s) => ({ ...s, theme: themeId }))}
       />
     </div>
   );

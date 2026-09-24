@@ -12,7 +12,6 @@ import {
   Settings,
   Volume2,
   VolumeX,
-  Palette,
   Command
 } from 'lucide-react';
 import { getStreak, LocalStreak, getLocalProfile, LocalProfile } from '@/lib/db';
@@ -21,13 +20,11 @@ import { soundEngine } from '@/lib/audio/sound-engine';
 
 interface HeaderProps {
   onOpenCommandPalette?: () => void;
-  onOpenThemeModal?: () => void;
   isTypingFocus?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   onOpenCommandPalette,
-  onOpenThemeModal,
   isTypingFocus = false
 }) => {
   const pathname = usePathname();
@@ -55,7 +52,6 @@ export const Header: React.FC<HeaderProps> = ({
     { href: '/practice', label: 'Practice', icon: Target },
     { href: '/stats', label: 'Statistics', icon: BarChart2 },
     { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
-    { href: '/challenge', label: 'Challenges', icon: Flame },
     { href: '/settings', label: 'Settings', icon: Settings }
   ];
 
@@ -126,18 +122,6 @@ export const Header: React.FC<HeaderProps> = ({
               <VolumeX className="w-4 h-4" />
             )}
           </button>
-
-          {/* Theme Switcher Quick Trigger */}
-          {onOpenThemeModal && (
-            <button
-              onClick={onOpenThemeModal}
-              aria-label="Theme Palette"
-              className="p-1.5 rounded hover:bg-bg-subtle text-text-muted hover:text-text-primary transition-colors border border-transparent hover:border-border"
-              title="Change Theme"
-            >
-              <Palette className="w-4 h-4" />
-            </button>
-          )}
 
           {/* Command Palette Trigger */}
           <button

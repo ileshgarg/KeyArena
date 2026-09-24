@@ -19,9 +19,6 @@ export const Footer: React.FC = () => {
           <Link href="/practice" className="hover:text-text-primary transition-colors">
             Practice
           </Link>
-          <Link href="/challenge" className="hover:text-text-primary transition-colors">
-            Daily Sprint
-          </Link>
           <Link href="/settings" className="hover:text-text-primary transition-colors">
             Settings
           </Link>

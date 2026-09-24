@@ -76,7 +76,7 @@ npm run start
 - **Independent Typing Engine (`@keyarena/typing-engine`)**: Mathematically rigorous WPM, Raw WPM, Accuracy, and Consistency algorithms.
 - **Fast Keystroke Loop**: Zero-lag typing with instant <kbd>Enter</kbd> or <kbd>Tab</kbd> restart for fresh randomized words.
 - **Deliberate Practice Suite**: Missed words, slow words, biwords/n-grams, and character error analytics.
-- **Custom Theme Studio**: 8 built-in technical themes (Graphite, Terminal, Amber, Slate, etc.) and a custom color picker.
+- **Monochrome Minimalist Theme**: High-contrast, distraction-free OLED dark aesthetic engineered for typing speed and focus.
 - **Procedural Web Audio**: Zero-lag mechanical switch sounds synthesized with the Web Audio API.
-- **Daily Challenges & Personal Bests**: Deterministic daily challenges seeded by date with shareable links and streak tracking.
+- **Personal Bests & Streak Tracking**: Automatic tracking of categorized best scores across time and word modes.
 - **Data Portability**: Full JSON export and import in Settings.
