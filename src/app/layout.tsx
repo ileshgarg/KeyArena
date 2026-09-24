@@ -100,6 +100,9 @@ export const metadata: Metadata = {
       'x-default': siteUrl
     }
   },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || 'google8ac30c8f349fd374'
+  },
   category: 'technology'
 };
 
