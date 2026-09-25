@@ -23,21 +23,21 @@ export interface KeyArenaTheme {
 
 export const MONOCHROME_THEME: KeyArenaTheme = {
   id: 'monochrome',
-  name: 'Monochrome',
+  name: 'Charcoal',
   colors: {
-    bgPrimary: '#000000',
-    bgSurface: '#0e0e0e',
-    bgSubtle: '#1c1c1c',
+    bgPrimary: '#36454F',
+    bgSurface: '#2b373f',
+    bgSubtle: '#41525d',
     textPrimary: '#ffffff',
-    textSecondary: '#9ca3af',
-    textMuted: '#525252',
+    textSecondary: '#cbd5e1',
+    textMuted: '#94a3b8',
     accent: '#ffffff',
-    accentHover: '#e5e5e5',
-    accentSubtle: '#1f1f1f',
+    accentHover: '#f1f5f9',
+    accentSubtle: '#41525d',
     error: '#ef4444',
-    errorSubtle: '#451212',
+    errorSubtle: '#5c2020',
     caret: '#ffffff',
-    border: '#262626'
+    border: '#475a67'
   }
 };
 

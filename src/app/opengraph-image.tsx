@@ -19,11 +19,11 @@ export default async function Image() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#000000',
+          backgroundColor: '#36454F',
           color: '#ffffff',
           fontFamily: 'monospace',
           padding: '60px 80px',
-          border: '12px solid #1a1a1a'
+          border: '12px solid #2b373f'
         }}
       >
         {/* Terminal Keycap Logo */}

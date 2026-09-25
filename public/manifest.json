@@ -4,8 +4,8 @@
   "description": "High-performance, keyboard-first typing practice and competitive platform.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#36454F",
+  "theme_color": "#36454F",
   "icons": [
     {
       "src": "/icon.svg",

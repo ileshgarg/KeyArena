@@ -3,23 +3,24 @@
 @tailwind utilities;
 
 :root {
-  --bg-primary: #000000;
-  --bg-surface: #0e0e0e;
-  --bg-subtle: #1c1c1c;
+  --bg-primary: #36454F;
+  --bg-surface: #2b373f;
+  --bg-subtle: #41525d;
   --text-primary: #ffffff;
-  --text-secondary: #9ca3af;
-  --text-muted: #525252;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
   --accent: #ffffff;
-  --accent-hover: #e5e5e5;
-  --accent-subtle: #1f1f1f;
+  --accent-hover: #f1f5f9;
+  --accent-subtle: #41525d;
   --error: #ef4444;
-  --error-subtle: #451212;
+  --error-subtle: #5c2020;
   --caret: #ffffff;
-  --border: #262626;
+  --border: #475a67;
   --border-focus: #ffffff;
 }
 
 body {
+  background-color: #36454F;
   background-color: var(--bg-primary);
   color: var(--text-primary);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -51,10 +52,15 @@ body {
 
 .caret-blink {
   animation: caretBlink 1s ease-in-out infinite;
+  transition: none !important;
 }
 
 .caret-smooth {
-  transition: transform 0.08s cubic-bezier(0.2, 0, 0, 1), opacity 0.15s ease;
+  transition: left 0.035s cubic-bezier(0.1, 0.9, 0.2, 1), top 0.05s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+.caret-static {
+  transition: none !important;
 }
 
 /* Typing text styling */

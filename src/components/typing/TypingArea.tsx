@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react';
 import {
   TypingEngine,
   TypingTestResult,
@@ -9,6 +9,9 @@ import {
 import { CaretStyle, CaretAnimation, FocusModeLevel } from '@/lib/settings';
 import { soundEngine } from '@/lib/audio/sound-engine';
 import { RotateCcw, AlertTriangle } from 'lucide-react';
+
+const useIsomorphicLayoutEffect =
+  typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 interface TypingAreaProps {
   engine: TypingEngine;
@@ -41,8 +44,10 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
   const hiddenInputRef = useRef<HTMLInputElement>(null);
   const activeCharRef = useRef<HTMLSpanElement | null>(null);
   const lastCharRef = useRef<HTMLSpanElement | null>(null);
+  const caretRef = useRef<HTMLDivElement>(null);
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  const [renderRevision, setRenderRevision] = useState(0);
   const [liveWpm, setLiveWpm] = useState(0);
   const [liveRawWpm, setLiveRawWpm] = useState(0);
   const [liveAcc, setLiveAcc] = useState(100);
@@ -65,14 +70,17 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
     const charEl = activeCharRef.current;
     const lastCharEl = lastCharRef.current;
 
+    let top = 0;
+    let left = 0;
+    let height = 28;
+    let width = caretStyle === 'block' ? 12 : 2;
+
     if (charEl) {
       const charRect = charEl.getBoundingClientRect();
-      setCaretPos({
-        top: charRect.top - containerRect.top + containerEl.scrollTop,
-        left: charRect.left - containerRect.left,
-        height: charRect.height || 28,
-        width: caretStyle === 'block' ? (charRect.width || 12) : 2
-      });
+      top = charRect.top - containerRect.top + containerEl.scrollTop;
+      left = charRect.left - containerRect.left;
+      height = charRect.height || 28;
+      width = caretStyle === 'block' ? (charRect.width || 12) : 2;
 
       // Smooth auto-scroll if cursor moves to lower lines
       const relativeTop = charRect.top - containerRect.top;
@@ -85,12 +93,10 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
       // User typed to the end of the word or extra chars and paused;
       // Position caret at the right edge of the last character
       const charRect = lastCharEl.getBoundingClientRect();
-      setCaretPos({
-        top: charRect.top - containerRect.top + containerEl.scrollTop,
-        left: charRect.right - containerRect.left,
-        height: charRect.height || 28,
-        width: caretStyle === 'block' ? 12 : 2
-      });
+      top = charRect.top - containerRect.top + containerEl.scrollTop;
+      left = charRect.right - containerRect.left;
+      height = charRect.height || 28;
+      width = caretStyle === 'block' ? 12 : 2;
 
       const relativeTop = charRect.top - containerRect.top;
       if (relativeTop > 120) {
@@ -104,17 +110,39 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
         const firstSpan = containerEl.querySelector('span');
         if (firstSpan) {
           const firstRect = firstSpan.getBoundingClientRect();
-          setCaretPos({
-            top: firstRect.top - containerRect.top + containerEl.scrollTop,
-            left: firstRect.left - containerRect.left,
-            height: firstRect.height || 28,
-            width: caretStyle === 'block' ? (firstRect.width || 12) : 2
-          });
+          top = firstRect.top - containerRect.top + containerEl.scrollTop;
+          left = firstRect.left - containerRect.left;
+          height = firstRect.height || 28;
+          width = caretStyle === 'block' ? (firstRect.width || 12) : 2;
+        } else {
+          return;
         }
+      } else {
+        // If user paused or mid-test, NEVER RESET! Keep previous valid caret position!
+        return;
       }
-      // If user paused or mid-test, NEVER RESET! Keep previous valid caret position!
     }
+
+    // Immediately update DOM element style for zero latency
+    if (caretRef.current) {
+      caretRef.current.style.top = `${top}px`;
+      caretRef.current.style.left = `${left}px`;
+      caretRef.current.style.height = caretStyle === 'underline' ? '3px' : `${height}px`;
+      caretRef.current.style.width = `${width}px`;
+      if (caretStyle === 'underline') {
+        caretRef.current.style.marginTop = `${height - 4}px`;
+      } else {
+        caretRef.current.style.marginTop = '0px';
+      }
+    }
+
+    setCaretPos({ top, left, height, width });
   }, [caretStyle, engine]);
+
+  // Synchronously update caret position immediately after React updates DOM refs and before browser paint
+  useIsomorphicLayoutEffect(() => {
+    updateCaretPosition();
+  });
 
   // Reset all state cleanly when a new engine instance is provided
   useEffect(() => {
@@ -143,12 +171,12 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
   useEffect(() => {
     const unsubscribe = engine.addListener({
       onUpdate: () => {
+        setRenderRevision(r => r + 1);
         setLiveWpm(Math.round(engine.getWpm()));
         setLiveRawWpm(Math.round(engine.getRawWpm()));
         setLiveAcc(Math.round(engine.getAccuracy()));
         setTimeRemaining(engine.getTimeRemaining());
         setProgress(engine.getProgress());
-        updateCaretPosition();
       },
       onSecondTick: (t: SecondTelemetry) => {
         setLiveWpm(Math.round(t.wpm));
@@ -451,6 +479,7 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
         {/* Dynamic Caret */}
         {engine.status !== 'completed' && engine.status !== 'failed' && (
           <div
+            ref={caretRef}
             className={`absolute pointer-events-none z-10 ${caretAnimClass}`}
             style={{
               top: `${caretPos.top}px`,

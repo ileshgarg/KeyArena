@@ -110,7 +110,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
-  themeColor: '#000000'
+  themeColor: '#36454F'
 };
 
 export default function RootLayout({
@@ -174,7 +174,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </head>
-      <body className="min-h-screen flex flex-col bg-bg-primary text-text-primary antialiased selection:bg-accent/30 selection:text-text-primary">
+      <body className="min-h-screen flex flex-col bg-[#36454F] bg-bg-primary text-text-primary antialiased selection:bg-accent/30 selection:text-text-primary">
         <div className="flex-1 flex flex-col">{children}</div>
         <Footer />
       </body>
