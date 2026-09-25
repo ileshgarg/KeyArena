@@ -16,7 +16,7 @@ import { TestConfig } from '@/components/typing/TestConfig';
 import { TypingArea } from '@/components/typing/TypingArea';
 import { ResultView } from '@/components/results/ResultView';
 import { CommandPalette } from '@/components/palette/CommandPalette';
-import { getSettings, saveSettings } from '@/lib/settings';
+import { getSettings, saveSettings, DEFAULT_SETTINGS } from '@/lib/settings';
 import { getWordsForLanguage } from '@/lib/languages';
 import { applyTheme } from '@/lib/themes';
 import { saveTestResult, getAllTests } from '@/lib/db';
@@ -26,7 +26,7 @@ export default function HomePage() {
   const router = useRouter();
 
   // Settings state
-  const [settings, setSettings] = useState(getSettings());
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [isTypingFocus, setIsTypingFocus] = useState(false);
 
   // Modals
@@ -256,7 +256,7 @@ export default function HomePage() {
                 difficulty={settings.difficulty}
                 punctuation={settings.punctuation}
                 numbers={settings.numbers}
-                modifiers={settings.modifiers}
+                modifiers={settings.modifiers || []}
                 quoteLength={settings.quoteLength}
                 onChangeMode={updateMode}
                 onChangeDuration={updateDuration}
@@ -273,7 +273,7 @@ export default function HomePage() {
 
             {/* Dominant Typing Area */}
             <TypingArea
-              key={`${testIteration}_${settings.mode}_${settings.targetDuration}_${settings.targetWordCount}_${settings.difficulty}_${settings.language}_${settings.punctuation}_${settings.numbers}_${settings.modifiers.join(',')}`}
+              key={`${testIteration}_${settings.mode}_${settings.targetDuration}_${settings.targetWordCount}_${settings.difficulty}_${settings.language}_${settings.punctuation}_${settings.numbers}_${(settings.modifiers || []).join(',')}`}
               engine={engine}
               caretStyle={settings.caretStyle}
               caretAnimation={settings.caretAnimation}

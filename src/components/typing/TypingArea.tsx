@@ -136,13 +136,23 @@ export const TypingArea: React.FC<TypingAreaProps> = ({
       }
     }
 
-    setCaretPos({ top, left, height, width });
+    setCaretPos((prev) => {
+      if (
+        prev.top === top &&
+        prev.left === left &&
+        prev.height === height &&
+        prev.width === width
+      ) {
+        return prev;
+      }
+      return { top, left, height, width };
+    });
   }, [caretStyle, engine]);
 
   // Synchronously update caret position immediately after React updates DOM refs and before browser paint
   useIsomorphicLayoutEffect(() => {
     updateCaretPosition();
-  });
+  }, [renderRevision, engine.currentWordIndex, engine.currentCharIndex, updateCaretPosition]);
 
   // Reset all state cleanly when a new engine instance is provided
   useEffect(() => {

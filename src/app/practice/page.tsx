@@ -39,7 +39,7 @@ export default function PracticePage() {
   const missedWordsAnalysis = useMemo(() => {
     const map: Record<string, number> = {};
     tests.forEach((t) => {
-      t.wordPerformance.forEach((wp) => {
+      (t.wordPerformance || []).forEach((wp) => {
         if (wp.errorCount > 0) {
           const w = wp.word.toLowerCase().replace(/[^a-z]/g, '');
           if (w.length >= 2) {
@@ -58,7 +58,7 @@ export default function PracticePage() {
   const slowWordsAnalysis = useMemo(() => {
     const map: Record<string, { totalSpeed: number; count: number }> = {};
     tests.forEach((t) => {
-      t.wordPerformance.forEach((wp) => {
+      (t.wordPerformance || []).forEach((wp) => {
         const w = wp.word.toLowerCase().replace(/[^a-z]/g, '');
         if (w.length >= 3) {
           if (!map[w]) map[w] = { totalSpeed: 0, count: 0 };
